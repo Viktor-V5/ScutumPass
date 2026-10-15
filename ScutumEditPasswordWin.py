@@ -8,14 +8,14 @@ from Classes.Accounts import ContainerRowContainer
 
 class ScutumEditPasswordWindow(BaseWindow):
 
-    def __init__(self, master, loaded_image,extracted_data,password_list_widget):
+    def __init__(self, master, loaded_image,extracted_data,password_list_widget,clipboard_manager):
         super().__init__(master)
         self.title("Scutum Pass")
         self.geometry(WINDOW_SIZE_LANDSCAPE)
         self.resizable(False, False)
         self.loaded_image = loaded_image
         self.master_window = master
-
+        self.clipboard_manager = clipboard_manager
         self.extracted_data = extracted_data
         self.password_list = password_list_widget
 
@@ -50,7 +50,7 @@ class ScutumEditPasswordWindow(BaseWindow):
         self.create_widgets()
 
     def password_generator_program(self):
-        password_generator_win = PasswordGeneratorWindow(self,self.loaded_image)
+        password_generator_win = PasswordGeneratorWindow(self,self.loaded_image,self.clipboard_manager)
         password_generator_win.grab_set()
 
 

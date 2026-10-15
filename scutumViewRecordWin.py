@@ -14,7 +14,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../')
 
 class ScutumViewRecordWindow(BaseWindow):
 
-    def __init__(self, master, loaded_image,extracted_data,password_list_widget):
+    def __init__(self, master, loaded_image,extracted_data,password_list_widget,clipboard_manager):
         super().__init__(master)
         self.title("Scutum Pass")
         self.geometry(WINDOW_SIZE_LANDSCAPE)
@@ -35,7 +35,7 @@ class ScutumViewRecordWindow(BaseWindow):
         self.key_bytes = session.key_bytes
 
         
-
+        self.clipboard_manager = clipboard_manager
         self.extracted_data = extracted_data
 
 
@@ -161,7 +161,7 @@ class ScutumViewRecordWindow(BaseWindow):
     
     def edit_record(self):
 
-        ScutumEditPasswordWindow(self,self.loaded_image,self.formated_record_get,self.password_list_widget)
+        ScutumEditPasswordWindow(self,self.loaded_image,self.formated_record_get,self.password_list_widget,self.clipboard_manager)
 
                
 

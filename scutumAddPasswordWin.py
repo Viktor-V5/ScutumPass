@@ -13,15 +13,15 @@ from Classes.Accounts import (
 
 class ScutumAddPasswordWindow(BaseWindow):
 
-    def __init__(self, master, loaded_image,password_list_widget):
+    def __init__(self, master, loaded_image,password_list_widget,clipboard_manager):
         super().__init__(master)
         self.title("Scutum Pass")
         self.geometry(WINDOW_SIZE_LANDSCAPE)
         self.resizable(False, False)
         self.loaded_image = loaded_image
-
+        
         self.master_widget = master
-
+        self.clipboard_manager = clipboard_manager
         self.password_list_widget = password_list_widget
 
         session = ContainerRowContainer.get_session()
@@ -47,7 +47,7 @@ class ScutumAddPasswordWindow(BaseWindow):
         self.create_widgets()
 
     def password_generator_program(self):
-        password_generator_win = PasswordGeneratorWindow(self,self.loaded_image)
+        password_generator_win = PasswordGeneratorWindow(self,self.loaded_image,self.clipboard_manager)
         password_generator_win.grab_set()
 
     def add_password(self):
@@ -96,7 +96,20 @@ class ScutumAddPasswordWindow(BaseWindow):
 
             tk.messagebox.showerror("Error",e)      
 
-  
+    def copy_to_clipboard(self, text, timeout=10):
+
+        if self.clipboard_timer is not None:
+            self.after_cancel(self.clipboard_timer)
+            self.clipboard_timer = None
+
+        self.clipboard_clear()
+        self.clipboard_append(str(text))
+        self.update_idletasks()
+
+        self.clipboard_timer = self.after(
+            timeout * 1000,
+            self.clear_clipboard
+        )
 
     def create_widgets(self):
 

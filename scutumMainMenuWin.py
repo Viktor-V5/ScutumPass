@@ -10,6 +10,7 @@ from Classes.Accounts import (
     ContainerRow,
     ContainerRowContainer
 )
+from scutumPassMainFunctionalities.globalClipboard import ClipboardManager
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../')
 
@@ -37,8 +38,9 @@ class ScutumMainMenuWindow(BaseWindow):
 
         self.search_variable = tk.StringVar()
         self.container_name = os.path.basename(self.db_location)
-
         self.password_list = None
+
+        self.clipboard_manager = ClipboardManager(self)
 
         self.create_widgets()
 
@@ -130,11 +132,37 @@ class ScutumMainMenuWindow(BaseWindow):
 
     def add_password_window(self):   
 
-        ScutumAddPasswordWindow(self,self.loaded_image,self.password_list)
+        ScutumAddPasswordWindow(self,self.loaded_image,self.password_list,self.clipboard_manager)
 
     def information_container(self):
         
         ScutumContainerInfoWindow(self,self.loaded_image,self.password_list)
+
+
+    def copy_to_clipboard(self, text, timeout=10):
+
+        if self.clipboard_timer is not None:
+            self.after_cancel(self.clipboard_timer)
+            self.clipboard_timer = None
+
+        self.clipboard_clear()
+        self.clipboard_append(str(text))
+        self.update_idletasks()
+
+        self.clipboard_timer = self.after(
+            timeout * 1000,
+            self.clear_clipboard
+        )
+
+
+    def clear_clipboard(self):
+        try:
+            self.clipboard_clear()
+            self.update_idletasks()
+        except tk.TclError:
+            pass
+        finally:
+            self.clipboard_timer = None
 
     def copy_password(self):
         if not self.password_list.curselection():
@@ -151,14 +179,9 @@ class ScutumMainMenuWindow(BaseWindow):
 
         name_field = record[1].strip()
 
-   
         record_password = database.get_db_password(self.db_location,self.key_bytes,name_field)
-
-        self.clipboard_clear()
-        self.clipboard_append(record_password)
-        self.update()
-        tk.messagebox.showinfo("Success","Password has been coppied. After 10 seconds the clipboard will be cleared")   
-        self.after(10000, self.clear_clipboard)
+        self.clipboard_manager.copy_clip(record_password, timeout=10)
+        tk.messagebox.showinfo("Success","Password copied. Clipboard will be cleared after 10 seconds.")
 
     def copy_name(self):
         if not self.password_list.curselection():
@@ -175,12 +198,9 @@ class ScutumMainMenuWindow(BaseWindow):
 
         name_field = record[1].strip()
 
+        self.clipboard_manager.copy_clip(name_field, timeout=10)
 
-        self.clipboard_clear()
-        self.clipboard_append(name_field)
-        self.update()  
-        tk.messagebox.showinfo("Success","Name has been coppied")  
-        self.after(10000, self.clear_clipboard)
+        tk.messagebox.showinfo("Success","Name copied. Clipboard will be cleared after 10 seconds.")
 
     def copy_email(self):
         if not self.password_list.curselection():
@@ -196,11 +216,9 @@ class ScutumMainMenuWindow(BaseWindow):
 
         record_email = record[2].strip()
 
-        self.clipboard_clear()
-        self.clipboard_append(record_email)
-        self.update() 
-        tk.messagebox.showinfo("Success","Email has been coppied. After 10 seconds the clipboard will be cleared") 
-        self.after(10000, self.clear_clipboard)
+        self.clipboard_manager.copy_clip(record_email, timeout=10)
+
+        tk.messagebox.showinfo("Success","Email copied. Clipboard will be cleared after 10 seconds.")
 
     def reveal_record_details(self):
 
@@ -218,7 +236,7 @@ class ScutumMainMenuWindow(BaseWindow):
         if question == "no":
             return
 
-        ScutumViewRecordWindow(self, self.loaded_image, record_get,self.password_list)
+        ScutumViewRecordWindow(self, self.loaded_image, record_get,self.password_list,self.clipboard_manager)
        
     def search_listbox(self,event=None):
 

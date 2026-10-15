@@ -8,13 +8,13 @@ from decimal import Decimal,ROUND_HALF_UP
 from Functions import cryptographicfunctions, database, otherfunctions
 from Classes.baseGUI import FONT_DEFAULT,BaseWindow, WINDOW_SIZE_LANDSCAPE,PASS_GEN_BUTTONS_FONT_SIZE
 import tkinter as tk
-from tkinter import filedialog, messagebox
+from tkinter import filedialog
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 
 class PasswordGeneratorWindow(BaseWindow):
 
-    def __init__(self, master, loaded_image):
+    def __init__(self, master, loaded_image,clipboard_manager):
         super().__init__(master)
         self.title("Scutum Pass")
         self.geometry(WINDOW_SIZE_LANDSCAPE)
@@ -23,10 +23,9 @@ class PasswordGeneratorWindow(BaseWindow):
 
         self.generated_password_length = tk.IntVar()
         self.password_var = tk.StringVar()
-        self.is_hidden = True
 
         self.genrated_password_entry = None
-
+        self.clipboard_manager = clipboard_manager
         
         self.chars = set()
         self.pool = []
@@ -99,20 +98,20 @@ class PasswordGeneratorWindow(BaseWindow):
         self.hide_button.grid(row=0, column=1, sticky="w")
 
     def clear_clipboard(self):
-        self.clipboard_clear()
-        self.clipboard_append("")
-        self.update()
+        print("CLEAR CLIPBOARD CALLED")
+        self.master.clipboard_clear()
+        self.master.clipboard_append("")
+        self.master.update()
+        
 
     def view_id(self):
         self.genrated_password_entry.config(show="")
-        self.is_hidden = False
 
         self.hide_button.config(state=tk.NORMAL)
         self.view_button.config(state=tk.DISABLED)
 
     def hide_id(self):
         self.genrated_password_entry.config(show="*")
-        self.is_hidden = True
 
         self.hide_button.config(state=tk.DISABLED)
         self.view_button.config(state=tk.NORMAL)
@@ -168,33 +167,39 @@ class PasswordGeneratorWindow(BaseWindow):
 
     def reset_character_types(self):
 
-
         self.password_slider.config(state=tk.DISABLED)
         self.copy_password_button.config(state=tk.DISABLED)
         self.generate_new_password_button.config(state=tk.DISABLED)
-        self.genrated_password_entry = tk.Entry(self.frame_password_generator,bg="#dddddd",borderwidth=0,font=(FONT_DEFAULT, 10),state="normal",textvariable=self.password_var,width=35)
-        self.a_z_button.config(state=tk.ACTIVE,activebackground="white",bg="white")
-        self.A_Z_button.config(state=tk.ACTIVE,activebackground="white",bg="white")
-        self.digits_button.config(state=tk.ACTIVE,activebackground="white",bg="white")
-        self.punctuation_button.config(state=tk.ACTIVE,activebackground="white",bg="white")
+
+        self.genrated_password_entry.config(state="disabled", show="*")
+        self.hide_button.config(state=tk.DISABLED)
+        self.view_button.config(state=tk.NORMAL)
+
+        self.a_z_button.config(state=tk.ACTIVE, activebackground="white", bg="white")
+        self.A_Z_button.config(state=tk.ACTIVE, activebackground="white", bg="white")
+        self.digits_button.config(state=tk.ACTIVE, activebackground="white", bg="white")
+        self.punctuation_button.config(state=tk.ACTIVE, activebackground="white", bg="white")
 
         self.generated_password_length.set(0)
-        self.entropy_label.config(fg="red",text = "0 bits (poor)")
+        self.entropy_label.config(fg="red", text="0 bits (poor)")
 
         self.chars = set()
         self.pool = []
 
-        self.update_pool()
-
         self.password_var.set("")
 
-    def copy_password(self):
 
-            self.genrated_password_entry.clipboard_clear()
-            self.genrated_password_entry.clipboard_append(self.password_var.get())
-            self.genrated_password_entry.update()
-            tk.messagebox.showinfo("Success","Password has been coppied. After 10 seconds the clipboard will be cleared")   
-            self.after(10000, self.clear_clipboard)
+    def copy_password(self):
+        password = self.password_var.get()
+
+        if not password:
+            tk.messagebox.showerror("Error", "No password to copy.")
+            return
+
+        self.clipboard_manager.copy_clip(password, timeout=10)
+
+        tk.messagebox.showinfo("Success","Password copied. Clipboard will be cleared after 10 seconds.")
+
 
     def reset_password(self):
 
