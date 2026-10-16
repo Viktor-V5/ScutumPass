@@ -3,7 +3,6 @@ import hmac
 import tkinter as tk
 import os
 import uuid
-from Crypto.Cipher import AES
 from secrets import token_bytes
 
 

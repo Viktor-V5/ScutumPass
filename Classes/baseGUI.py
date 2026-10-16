@@ -51,27 +51,11 @@ class BaseWindow(tk.Toplevel):
         self.geometry(WINDOW_SIZE)
         self.resizable(False, False)
 
-        # Reuse already loaded images when possible.
-        # This prevents every window from loading all images again.
         if loaded_image is not None:
             self.loaded_image = loaded_image
         else:
             self.loaded_image = load_loaded_image()
 
-        # -------------------------------------------------
-        # Window icon
-        # -------------------------------------------------
-
-        ##self.PhotoLogoSmall = tk.PhotoImage(
-        ##    file=os.path.join(
-        ##        "Data",
-        ##        "Images",
-        ##        "Other dimensions",
-        ##        "logo small.png"
-        ##    )
-        ##)
-
-        ##self.iconphoto(True, self.PhotoLogoSmall)
 
         # -------------------------------------------------
         # Cross-platform window close button
@@ -155,7 +139,7 @@ class BaseWindow(tk.Toplevel):
 
         # Get the actual Tk root window.
         try:
-            root = self.winfo_toplevel()
+            root = self.nametowidget(".")
         except tk.TclError:
             root = self
 

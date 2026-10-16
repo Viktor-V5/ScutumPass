@@ -117,6 +117,7 @@ class ScutumLoginContainerWindow(BaseWindow):
                 loaded_image = self.loaded_image
 
                 self.destroy()
+                parent.withdraw()
 
                 ScutumMainMenuWindow(parent, loaded_image)
 

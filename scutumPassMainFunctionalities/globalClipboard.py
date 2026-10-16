@@ -36,7 +36,5 @@ class ClipboardManager:
             self.root.clipboard_append("")
             self.root.update()
 
-            print("Clipboard cleared. Test with Ctrl+V.")
-
         except tk.TclError as error:
             print("Clipboard error:", error)

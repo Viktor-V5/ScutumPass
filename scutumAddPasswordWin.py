@@ -92,24 +92,21 @@ class ScutumAddPasswordWindow(BaseWindow):
 
             tk.messagebox.showinfo("Success",f"{string_title} has successfully added")        
 
-        except ValueError and FileNotFoundError as e:
+        except (ValueError,FileNotFoundError) as e:
 
             tk.messagebox.showerror("Error",e)      
 
-    def copy_to_clipboard(self, text, timeout=10):
+    def view_id(self):
+        self.entry_pass.config(show="")
 
-        if self.clipboard_timer is not None:
-            self.after_cancel(self.clipboard_timer)
-            self.clipboard_timer = None
+        self.hide_button.config(state=tk.NORMAL)
+        self.view_button.config(state=tk.DISABLED)
 
-        self.clipboard_clear()
-        self.clipboard_append(str(text))
-        self.update_idletasks()
+    def hide_id(self):
+        self.entry_pass.config(show="*")
 
-        self.clipboard_timer = self.after(
-            timeout * 1000,
-            self.clear_clipboard
-        )
+        self.hide_button.config(state=tk.DISABLED)
+        self.view_button.config(state=tk.NORMAL)
 
     def create_widgets(self):
 
@@ -140,8 +137,8 @@ class ScutumAddPasswordWindow(BaseWindow):
 
         tk.Label(self.frame_add_password,font=(FONT_DEFAULT,8),text="Password:",bg="white").grid(row=3 , column=0)
 
-        self.entry_pass = tk.Entry(self.frame_add_password,bg="#dddddd",borderwidth=0,font=(FONT_DEFAULT,8),textvariable=self.pass_var,width=20)
-        self.entry_pass.grid(row=3 , column=1)
+        self.entry_pass = tk.Entry(self.frame_add_password,bg="#dddddd",borderwidth=0,font=(FONT_DEFAULT, 8),textvariable=self.pass_var,width=20,show="*")
+        self.entry_pass.grid(row=3, column=1)
 
         tk.Button(self.frame_add_password,font=(FONT_DEFAULT,8),text="Add password",command=self.add_password,width=12).grid(row=4,column=1,pady=10)
 
@@ -150,3 +147,14 @@ class ScutumAddPasswordWindow(BaseWindow):
 
         self.generate_password_button = tk.Button(self.frame_add_password,image=self.loaded_image["random_button"],highlightbackground="white",borderwidth=0,command=self.password_generator_program)
         self.generate_password_button.grid(row=3,column=2,padx=8)
+
+        frame_hide_view_buttons = tk.Frame(self.frame_add_password, bg="white")
+        frame_hide_view_buttons.grid(row=3, column=3, padx=2)
+
+        self.view_button = tk.Button(frame_hide_view_buttons, font=(FONT_DEFAULT, 6, "bold"), activebackground="white",
+                                     highlightbackground="white", bg="white", text="view", borderwidth=0, command=self.view_id)
+        self.view_button.grid(row=0, column=0, sticky="w")
+
+        self.hide_button = tk.Button(frame_hide_view_buttons, font=(FONT_DEFAULT, 6, "bold"), activebackground="white",
+                                     highlightbackground="white", bg="white", text="hide", borderwidth=0, state="disabled", command=self.hide_id)
+        self.hide_button.grid(row=0, column=1, sticky="w")

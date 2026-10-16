@@ -159,7 +159,7 @@ class ScutumContainerInfoWindow(BaseWindow):
         try:
 
                 
-            with open(csv_location, 'r') as file:
+            with open(csv_location, 'r', newline='', encoding='utf-8-sig') as file:
                 csv_reader = csv.DictReader(file)
                 for row in csv_reader:
                     # Extract data from CSV row

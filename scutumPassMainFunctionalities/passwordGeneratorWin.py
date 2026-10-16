@@ -97,13 +97,6 @@ class PasswordGeneratorWindow(BaseWindow):
                                         highlightbackground="white", bg="white", text="hide", borderwidth=0, state="disabled", command=self.hide_id)
         self.hide_button.grid(row=0, column=1, sticky="w")
 
-    def clear_clipboard(self):
-        print("CLEAR CLIPBOARD CALLED")
-        self.master.clipboard_clear()
-        self.master.clipboard_append("")
-        self.master.update()
-        
-
     def view_id(self):
         self.genrated_password_entry.config(show="")
 
@@ -115,7 +108,6 @@ class PasswordGeneratorWindow(BaseWindow):
 
         self.hide_button.config(state=tk.DISABLED)
         self.view_button.config(state=tk.NORMAL)
-
 
     def update_pool(self):
         self.pool = list(self.chars)
@@ -187,7 +179,6 @@ class PasswordGeneratorWindow(BaseWindow):
         self.pool = []
 
         self.password_var.set("")
-
 
     def copy_password(self):
         password = self.password_var.get()

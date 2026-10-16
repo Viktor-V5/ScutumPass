@@ -23,7 +23,7 @@ class ScutumMainMenuWindow(BaseWindow):
         self.geometry(WINDOW_SIZE)
         self.resizable(False, False)
         self.loaded_image = loaded_image
-
+        self.protocol("WM_DELETE_WINDOW", self.close_application)
         session = ContainerRowContainer.get_session()
 
 
@@ -137,32 +137,6 @@ class ScutumMainMenuWindow(BaseWindow):
     def information_container(self):
         
         ScutumContainerInfoWindow(self,self.loaded_image,self.password_list)
-
-
-    def copy_to_clipboard(self, text, timeout=10):
-
-        if self.clipboard_timer is not None:
-            self.after_cancel(self.clipboard_timer)
-            self.clipboard_timer = None
-
-        self.clipboard_clear()
-        self.clipboard_append(str(text))
-        self.update_idletasks()
-
-        self.clipboard_timer = self.after(
-            timeout * 1000,
-            self.clear_clipboard
-        )
-
-
-    def clear_clipboard(self):
-        try:
-            self.clipboard_clear()
-            self.update_idletasks()
-        except tk.TclError:
-            pass
-        finally:
-            self.clipboard_timer = None
 
     def copy_password(self):
         if not self.password_list.curselection():

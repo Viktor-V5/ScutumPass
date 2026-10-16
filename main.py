@@ -16,7 +16,16 @@ class Main(tk.Tk):
         self.geometry(WINDOW_SIZE)
         self.resizable(False, False) 
         self.loaded_image = load_loaded_image()
-        
+        self.PhotoLogoSmall = tk.PhotoImage(
+            file=os.path.join(
+                "Data",
+                "Images",
+                "Other dimensions",
+                "logo.png"
+            )
+        )
+
+        self.iconphoto(True, self.PhotoLogoSmall)
         self.create_widgets()
 
     def create_widgets(self):
